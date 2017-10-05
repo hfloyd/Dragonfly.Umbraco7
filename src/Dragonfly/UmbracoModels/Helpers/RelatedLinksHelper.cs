@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using DataTypes;
+    using Newtonsoft.Json;
     using Umbraco.Core.Models;
     using Umbraco.Web;
     using Umbraco7Helpers;
@@ -82,6 +83,25 @@
             }
 
             return list;
+        }
+
+        public static IEnumerable<RelatedLink> JObjectToRelatedLinks(string ObjValue)
+        {
+            var allLinks = new List<RelatedLink>();
+
+            //var rls = (IEnumerable<RelatedLink>)JsonConvert.DeserializeObject(ObjValue);
+
+            dynamic jsonObj = JsonConvert.DeserializeObject(ObjValue);
+
+            foreach (var obj in jsonObj)
+            {
+                RelatedLink rl = new RelatedLink(obj);
+                allLinks.Add(rl);
+            }
+            
+            // JArray array = JsonConvert.DeserializeObject(ObjValue);
+            //IEnumerable<RelatedLink> links = array
+            return allLinks;
         }
 
         /// <summary>
