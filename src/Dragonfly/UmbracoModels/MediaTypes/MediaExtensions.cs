@@ -45,7 +45,7 @@
         /// </returns>
         public static IEnumerable<MediaFile> ToMediaFiles(this IEnumerable<IPublishedContent> contents)
         {
-            var iMedia= contents.ToList().Select<IPublishedContent, IMediaFile>(x => x.ToMediaFile());
+            var iMedia = contents.ToList().Select<IPublishedContent, IMediaFile>(x => x.ToMediaFile());
             return iMedia.ToMediaFiles();
         }
 
@@ -58,23 +58,23 @@
         /// <returns>
         /// The <see cref="IMediaFile"/>.
         /// </returns>
-        public static MediaFile ToMediaFile(this IPublishedContent content)
+        public static MediaFile ToMediaFile(this IPublishedContent MediaContent)
         {
             return new MediaFile()
             {
-                Content = content,
-                Id = content.Id,
-                Bytes = content.GetSafeInt("umbracoBytes", 0),
-                Extension = content.GetSafeString("umbracoExtension"),
-                Url = content.Url,
-                Name = content.Name
+                Content = MediaContent,
+                Id = MediaContent.Id,
+                Bytes = MediaContent.GetSafeInt("umbracoBytes", 0),
+                Extension = MediaContent.GetSafeString("umbracoExtension"),
+                Url = MediaContent.Url,
+                Name = MediaContent.Name
             };
         }
 
         #endregion
 
         #region To IEnum<MediaImage> extensions
-        
+
         public static IEnumerable<MediaImage> ToMediaImages(this IEnumerable<IMediaImage> IMedias)
         {
             var all = new List<MediaImage>();
@@ -88,7 +88,7 @@
             }
 
             return all;
-        }  
+        }
 
         /// <summary>
         /// Creates a collection of <see cref="IMediaImage"/> from a list of <see cref="IPublishedContent"/> (media)
@@ -104,33 +104,100 @@
             return contents.ToList().Select(x => x.ToImage());
         }
 
+
+        #endregion
+
+        #region To IMediaImage extensions
+
+        //TODO: Cleanup and consolidate all these so they work the same...
+
         /// <summary>
         /// Utility extension to convert <see cref="IPublishedContent"/> to an <see cref="IMediaImage"/>
         /// </summary>W
         /// <param name="content">
-        /// The <see cref="IPublishedContent"/>
+        /// The <see cref="IPublishedContent"/> of the Media node
         /// </param>
         /// <returns>
         /// The <see cref="IMediaImage"/>.
         /// </returns>
+        [Obsolete("Use 'ToMediaImage()'")]
         public static IMediaImage ToImage(this IPublishedContent content)
+        {
+            return content.ToMediaImage();
+        }
+
+        /// <summary>
+        /// Utility extension to convert <see cref="IPublishedContent"/> to an <see cref="IMediaImage"/>
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IMediaImage"/>.
+        /// </returns>
+        public static IMediaImage ToImage(this ImageCropDataSet CropData)
         {
             var img = new MediaImage()
             {
-                Content = content,
-                Id = content.Id,
-                Bytes = content.GetSafeInt("umbracoBytes", 0),
-                Extension = content.GetSafeString("umbracoExtension"),
-                Name = content.GetSafeString("Name"),
-                ImageAltText = content.GetSafeString("ImageAltText"),
-                ImageAltDictionaryKey = content.GetSafeString("ImageAltDictionaryKey"),
-                OriginalPixelWidth = content.GetSafeInt("umbracoWidth", 0),
-                OriginalPixelHeight = content.GetSafeInt("umbracoHeight", 0)
+                Content = null,
+                Id = 0,
+                Bytes = 0,
+                Url = CropData.Src,
+                Extension = "", //TODO: extract extension from filename (Src)
+                Name = "", //TODO: extract name from filename (Src)
+                ImageAltText = "",
+                ImageAltDictionaryKey = "",
+                OriginalPixelWidth = 0,
+                OriginalPixelHeight = 0
             };
 
-            //var urlData = content.GetSafeString("umbracoFile");
-      
-            var urlDataObj = content.GetPropertyValue("umbracoFile");
+            if (CropData.HasFocalPoint())
+            {
+                img.HasFocalPoint = true;
+                img.FocalPointLeft = Convert.ToDouble(CropData.FocalPoint.Left);
+                img.FocalPointTop = Convert.ToDouble(CropData.FocalPoint.Top);
+            }
+            else
+            {
+                img.HasFocalPoint = false;
+                img.FocalPointLeft = 0;
+                img.FocalPointTop = 0;
+            }
+
+            return img;
+        }
+
+        /// <summary>
+        /// Utility extension to convert <see cref="IPublishedContent"/> to an <see cref="IMediaImage"/>
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IMediaImage"/>.
+        /// </returns>
+        public static IMediaImage ToMediaImage(this IPublishedContent MediaContent, string ImageName = "", string AltText = "", string AltDictionary = "")
+        {
+            var name = ImageName != "" ? ImageName : MediaContent.GetSafeString("Name");
+            if (name == "")
+            {
+                name = MediaContent.Name;
+            }
+
+            var altText = AltText != "" ? AltText : MediaContent.GetSafeString("ImageAltText");
+            if (altText == "")
+            {
+                altText = MediaContent.Name;
+            }
+
+            var img = new MediaImage()
+            {
+                Content = MediaContent,
+                Id = MediaContent.Id,
+                Bytes = MediaContent.GetSafeInt("umbracoBytes", 0),
+                Extension = MediaContent.GetSafeString("umbracoExtension"),
+                Name = name,
+                ImageAltText = altText,
+                ImageAltDictionaryKey = AltDictionary != ""? AltDictionary : MediaContent.GetSafeString("ImageAltDictionaryKey"),
+                OriginalPixelWidth = MediaContent.GetSafeInt("umbracoWidth", 0),
+                OriginalPixelHeight = MediaContent.GetSafeInt("umbracoHeight", 0)
+            };
+
+            var urlDataObj = MediaContent.GetPropertyValue("umbracoFile");
             var urlDataType = urlDataObj.GetType().ToString();
 
             if (urlDataType == "Umbraco.Web.Models.ImageCropDataSet")
@@ -199,26 +266,29 @@
                     img.FocalPointTop = 0;
                 }
             }
-
-
             return img;
         }
 
-        #endregion
-
-        #region To IMediaImage extensions
-
 
         /// <summary>
-        /// Utility extension to convert <see cref="IPublishedContent"/> to an <see cref="IMediaImage"/>
+        /// Utility extension to convert <see cref="IPublishedContent"/> crop to an <see cref="IMediaImage"/>
         /// </summary>
         /// <returns>
         /// The <see cref="IMediaImage"/>.
         /// </returns>
         public static IMediaImage CropperPropertyToImage(string ImageCropperProperty, string ImageName = "", string AltText = "", string AltDictionary = "")
         {
-            var jsonProp = new JObject(ImageCropperProperty);
-            return CropperPropertyToImage(jsonProp, ImageName, AltText, AltDictionary);
+            try
+            {
+                var jsonProp = new JObject(ImageCropperProperty);
+                return CropperPropertyToImage(jsonProp, ImageName, AltText, AltDictionary);
+            }
+            catch (ArgumentException exSystemArgumentException)
+            {
+                //most likely because only a file path is present, no crop data
+                return ImgUrlToImage(ImageCropperProperty, ImageName, AltText, AltDictionary);
+            }
+            
         }
 
         /// <summary>
@@ -235,7 +305,7 @@
                 ImageAltText = AltText,
                 ImageAltDictionaryKey = AltDictionary,
                 Content = null,
-                Id = 0,
+                Id = 0
             };
 
             //var jsonCrop = JObject.Parse(ImageCropperProperty);
@@ -271,35 +341,61 @@
                 img.FocalPointLeft = 0;
                 img.FocalPointTop = 0;
             }
-            //}
-            //else
-            //{
-            //    img.Url = urlData.ToString();
-            //    img.JsonCropData = null;
-            //    img.FocalPointLeft = 0;
-            //    img.FocalPointTop = 0;
-            //}
 
             //Get image info
-            var serverPath = System.Web.HttpContext.Current.Server.MapPath(img.Url);
+            img = AddFileInfoFromServer(img);
+
+            return img;
+        }
+
+        /// <summary>
+        /// Utility extension to convert <see cref="IPublishedContent"/> to an <see cref="IMediaImage"/>
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IMediaImage"/>.
+        /// </returns>
+        public static IMediaImage ImgUrlToImage(string ImageSrcUrl, string ImageName = "", string AltText = "", string AltDictionary = "")
+        {
+            var img = new MediaImage()
+            {
+                Name = ImageName,
+                ImageAltText = AltText,
+                ImageAltDictionaryKey = AltDictionary,
+                Content = null,
+                Id = 0,
+                Url = ImageSrcUrl,
+                HasFocalPoint = false,
+                FocalPointLeft = 0,
+                FocalPointTop = 0
+            };
+
+            img = AddFileInfoFromServer(img);
+
+            return img;
+        }
+
+        private static MediaImage AddFileInfoFromServer(MediaImage MediaImage)
+        {
+            //Get image info
+            var serverPath = System.Web.HttpContext.Current.Server.MapPath(MediaImage.Url);
 
             try
             {
                 var imgFileInfo = new System.IO.FileInfo(serverPath);
-                img.Bytes = Convert.ToInt32(imgFileInfo.Length);
-                img.Extension = imgFileInfo.Extension;
+                MediaImage.Bytes = Convert.ToInt32(imgFileInfo.Length);
+                MediaImage.Extension = imgFileInfo.Extension;
 
                 var imgDimensions = System.Drawing.Image.FromFile(serverPath).Size;
-                img.OriginalPixelWidth = imgDimensions.Width;
-                img.OriginalPixelHeight = imgDimensions.Height;
+                MediaImage.OriginalPixelWidth = imgDimensions.Width;
+                MediaImage.OriginalPixelHeight = imgDimensions.Height;
             }
             catch (System.IO.FileNotFoundException fnfEx)
             {
-                var msg = string.Format("{0}.CropperPropertyToImage() File Not Found on Disk: '{1}'. Unable to get file details for IMediaImage", ThisClassName, serverPath);
+                var msg = string.Format("{0}.AddFileInfoFromServer() File Not Found on Disk: '{1}'. Unable to get file details for IMediaImage", ThisClassName, serverPath);
                 LogHelper.Error<FileInfo>(msg, fnfEx);
             }
 
-            return img;
+            return MediaImage;
         }
 
         #endregion
@@ -498,10 +594,10 @@
             }
             else
             {
-               return new List<MediaFile>() { defaultFile as MediaFile };
+                return new List<MediaFile>() { defaultFile as MediaFile };
             }
-            
-            
+
+
         }
 
         #endregion
@@ -591,6 +687,16 @@
                     {
                         var mediaNode = umbraco.TypedMedia(umbMedia.Id) as IPublishedContent;
                         var mImage = mediaNode.ToImage();
+
+                        return mImage;
+                    }
+                }
+                if (type == "Umbraco.Web.Models.ImageCropDataSet")
+                {
+                    var cropData = propValue as Umbraco.Web.Models.ImageCropDataSet;
+                    if (cropData.HasImage())
+                    {
+                        var mImage = cropData.ToImage();
 
                         return mImage;
                     }

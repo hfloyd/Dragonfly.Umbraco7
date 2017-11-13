@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Web;
     using System.Web.Mvc;
+    using Dragonfly.UmbracoModels;
     using Umbraco.Core.Models;
     using Umbraco.Web;
     using Umbraco.Web.Models;
@@ -544,11 +545,31 @@
             return returnVal;
         }
 
+        public static MediaImage GetFirstMatchingPropValueMediaImage(this IPublishedContent content, IEnumerable<string> PropsToTest, UmbracoHelper umbraco)
+        {
+            MediaImage mediaImg = new MediaImage();
+            bool flag = true;
+            foreach (string propertyAlias in PropsToTest)
+            {
+                if (flag)
+                {
+                    var safeMedia = content.GetSafeImage(umbraco, propertyAlias);
+                    if (safeMedia.Url != "")
+                    {
+                        mediaImg = safeMedia as MediaImage;
+                        flag = false;
+                    }
+                }
+            }
+
+            return mediaImg;
+        }
+
         #endregion
-       
+
         #region General
 
-        
+
 
         #endregion
     }
