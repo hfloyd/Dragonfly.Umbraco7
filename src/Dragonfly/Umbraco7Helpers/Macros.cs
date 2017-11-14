@@ -2,6 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using Umbraco.Core.Models;
+    using Umbraco.Web;
 
     public static class Macros
     {
@@ -83,6 +86,56 @@
             else
             {
                 return DefaultNullValue;
+            }
+        }
+
+        /// <summary>
+        /// Returns a collection of IPublishedContent from a MultiContentPicker Macro Parameter
+        /// </summary>
+        /// <param name="MacrosCollection">ex: 'Model.MacroParameters'</param>
+        /// <param name="Key">Parameter alias</param>
+        /// <param name="UmbracoHelper">ex: 'Umbraco'</param>
+        /// <returns>IEnumerable&lt;IPublishedContent&gt;</returns>
+        public static IEnumerable<IPublishedContent> GetSafeParamMultiContent(IDictionary<string, object> MacrosCollection, string Key, UmbracoHelper UmbracoHelper)
+        {
+            var nodesList = new List<IPublishedContent>();
+
+            var value = MacrosCollection[Key];
+
+            if (value != null && value.ToString() != "")
+            {
+                var contentIds = value.ToString().Split(',');
+
+                if (contentIds.Any())
+                {
+                    foreach (var id in contentIds)
+                    {
+                        nodesList.Add(UmbracoHelper.TypedContent(id));
+                    }
+                }
+            }
+
+            return nodesList;
+        }
+
+        /// <summary>
+        /// Returns an IPublishedContent from a ContentPicker Macro Parameter
+        /// </summary>
+        /// <param name="MacrosCollection">ex: 'Model.MacroParameters'</param>
+        /// <param name="Key">Parameter alias</param>
+        /// <param name="UmbracoHelper">ex: 'Umbraco'</param>
+        /// <returns>IPublishedContent or NULL</returns>
+        public static IPublishedContent GetSafeParamContent(IDictionary<string, object> MacrosCollection, string Key, UmbracoHelper UmbracoHelper)
+        {
+            var value = MacrosCollection[Key];
+
+            if (value != null && value.ToString() != "" && value.ToString() != "0")
+            {
+               return UmbracoHelper.TypedContent(value);
+            }
+            else
+            {
+                return null;
             }
         }
     }
