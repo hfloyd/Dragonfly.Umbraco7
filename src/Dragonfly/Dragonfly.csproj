@@ -23,7 +23,7 @@
     <DocumentationFile>bin\Debug\net45\Dragonfly.Umbraco7.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="UmbracoCms.Core" Version="7.7.1" />
+    <PackageReference Include="UmbracoCms.Core" Version="7.9.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
