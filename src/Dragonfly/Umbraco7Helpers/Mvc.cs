@@ -35,6 +35,17 @@
             return returnValue;
         }
 
+        public static double GetSafeViewDataDouble(ViewDataDictionary VdDictionary, string Key, Double DefaultNullValue = 0)
+        {
+            var val = VdDictionary[Key] != null ? VdDictionary[Key] : DefaultNullValue;
+
+            double returnValue = DefaultNullValue;
+
+            var test = Double.TryParse(val.ToString(), out returnValue);
+
+            return returnValue;
+        }
+
         public static bool GetSafeViewDataBool(ViewDataDictionary VdDictionary, string Key, bool DefaultNullValue = false)
         {
             var val = VdDictionary[Key] != null ? VdDictionary[Key].ToString() : "";
