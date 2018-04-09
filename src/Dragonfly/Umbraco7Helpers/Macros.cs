@@ -76,7 +76,7 @@
                 {
                     returnBool = true;
                 }
-                else if (value.ToString() == "true")
+                else if (value.ToString().ToLower() == "true")
                 {
                     returnBool = true;
                 }
