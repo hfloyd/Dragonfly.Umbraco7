@@ -60,6 +60,7 @@
         /// <summary>
         /// Return a Boolean for a Macro Parameter
         /// </summary>
+        /// <remarks>Supports Numeric (1) and Text (True and true) values.</remarks>
         /// <param name="MacrosCollection">ex: 'Model.MacroParameters'</param>
         /// <param name="Key">Parameter alias</param>
         /// <param name="DefaultNullValue"></param>
