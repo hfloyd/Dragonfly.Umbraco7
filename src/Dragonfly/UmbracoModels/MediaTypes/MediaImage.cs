@@ -12,6 +12,7 @@
     {
         /// <summary>
         /// Gets or sets the Alt Text.
+        /// Default uses the MediaType Property "ImageAltText" or "ImageAltDictionaryKey"
         /// </summary>
         string ImageAltText { get; set; }
 
