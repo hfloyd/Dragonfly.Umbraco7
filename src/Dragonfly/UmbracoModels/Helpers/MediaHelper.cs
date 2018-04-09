@@ -41,7 +41,7 @@
                 if (umbMedia.Id != 0)
                 {
                     var mediaNode = Umbraco.TypedMedia(umbMedia.Id) as IPublishedContent;
-                    var mImage = mediaNode.ToImage();
+                    var mImage = mediaNode.ToMediaImage();
 
                     return mImage;
                 }
