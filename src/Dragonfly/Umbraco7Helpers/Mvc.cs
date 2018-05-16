@@ -14,8 +14,19 @@
             {
                 DefaultNullValue = "";
             }
-            return VdDictionary[Key] != null ? VdDictionary[Key].ToString() : DefaultNullValue;
+            return VdDictionary[Key] != null ? VdDictionary[Key] : DefaultNullValue;
         }
+
+
+        //public static T GetSafeViewData<T>(ViewDataDictionary VdDictionary, string Key)
+        //{
+        //    if (DefaultNullValue == null)
+        //    {
+        //        DefaultNullValue = new T();
+        //    }
+
+        //    return VdDictionary[Key] != null ? VdDictionary[Key] : DefaultNullValue;
+        //}
 
         public static string GetSafeViewDataString(ViewDataDictionary VdDictionary, string Key, string DefaultNullValue = "")
         {
