@@ -111,7 +111,11 @@
                 {
                     foreach (var id in contentIds)
                     {
-                        nodesList.Add(UmbracoHelper.TypedContent(id));
+                        var node = UmbracoHelper.TypedContent(id);
+                        if (node != null)
+                        {
+                            nodesList.Add(node);
+                        }
                     }
                 }
             }
@@ -132,7 +136,15 @@
 
             if (value != null && value.ToString() != "" && value.ToString() != "0")
             {
-               return UmbracoHelper.TypedContent(value);
+                var node = UmbracoHelper.TypedContent(value);
+                if (node != null)
+                {
+                    return node;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
