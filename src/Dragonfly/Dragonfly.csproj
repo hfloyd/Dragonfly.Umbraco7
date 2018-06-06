@@ -8,7 +8,7 @@
     <Authors>Heather Floyd</Authors>
     <Company></Company>
     <Product>Dragonfly</Product>
-    <Description>A collection of Umbraco 7 Helpers &amp; Models</Description>
+    <Description>A collection of Umbraco 7 Helpers &amp; Models (min Umbraco v.7.7.1)</Description>
     <PackageLicenseUrl>https://github.com/hfloyd/Dragonfly.Umbraco7/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/hfloyd/Dragonfly.Umbraco7</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hfloyd/Dragonfly.Umbraco7</RepositoryUrl>
@@ -31,6 +31,6 @@
   <Import Project="..\Custom.targets" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Debug (XCOPY /y &quot;$(TargetDir)$(TargetName).*&quot; &quot;C:\Users\Heather\NAS Folders\Active Projects\Webs\Clients\Subtext\WhereScape-2017\sourcecode\WhereScape.Web\bin&quot;)" />
+    <Exec Command="if $(ConfigurationName) == Debug (XCOPY /y &quot;$(TargetDir)$(TargetName).*&quot; &quot;C:\Users\...\x.Web\bin&quot;)" />
   </Target>
 </Project>

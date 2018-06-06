@@ -3,6 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
+    using System.Web;
+    using Dragonfly.UmbracoModels;
     using Umbraco.Core.Models;
     using Umbraco.Web;
 
@@ -32,6 +35,39 @@
         public static string GetSafeParamString(IDictionary<string, object> MacrosCollection, string Key, string DefaultNullValue = "")
         {
             return MacrosCollection[Key] != null ? MacrosCollection[Key].ToString() : DefaultNullValue;
+        }
+
+        /// <summary>
+        /// Return an IHtmlString for a Macro Parameter
+        /// </summary>
+        /// <param name="MacrosCollection">ex: 'Model.MacroParameters'</param>
+        /// <param name="Key">Parameter alias</param>
+        /// <param name="DefaultNullValue">Default null value - if provided, otherwise, an Empty String</param>
+        /// <returns></returns>
+        public static IHtmlString GetSafeParamHtmlString(IDictionary<string, object> MacrosCollection, string Key, string DefaultNullValue = "")
+        {
+            var value = MacrosCollection[Key];
+
+            if (value != null && value.ToString() != "")
+            {
+                var unencodedString = "";
+                if (value.ToString().Contains("&lt;"))
+                {
+                    var encodedString = value.ToString();
+                    unencodedString = WebUtility.HtmlDecode(encodedString);
+                }
+                else
+                {
+                    unencodedString = value.ToString();                    
+                }
+
+                return new HtmlString(unencodedString); 
+            }
+            else
+            {
+                return new HtmlString( DefaultNullValue);
+            }
+            
         }
 
         /// <summary>
@@ -145,6 +181,30 @@
                 {
                     return null;
                 }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns an IPublishedContent from a ContentPicker Macro Parameter
+        /// </summary>
+        /// <param name="MacrosCollection">ex: 'Model.MacroParameters'</param>
+        /// <param name="Key">Parameter alias</param>
+        /// <param name="UmbracoHelper">ex: 'Umbraco'</param>
+        /// <returns>IPublishedContent or NULL</returns>
+        public static IPublishedContent GetSafeParamMediaContent(IDictionary<string, object> MacrosCollection, string Key, UmbracoHelper UmbracoHelper)
+        {
+            var value = MacrosCollection[Key];
+
+            if (value != null && value.ToString() != "")
+            {
+                //if (value.ToString().StartsWith("umb://media/"))
+                //{
+                    return UmbracoHelper.TypedMedia(value);
+                //}
             }
             else
             {
