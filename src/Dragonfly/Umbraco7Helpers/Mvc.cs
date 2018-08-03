@@ -8,6 +8,8 @@
     {
         private const string ThisClassName = "Dragonfly.Umbraco7Helpers.Mvc";
 
+        #region GetSafeViewData
+
         public static object GetSafeViewData(ViewDataDictionary VdDictionary, string Key, object DefaultNullValue = null)
         {
             if (DefaultNullValue == null)
@@ -16,25 +18,6 @@
             }
             return VdDictionary[Key] != null ? VdDictionary[Key] : DefaultNullValue;
         }
-
-        #region === MVC Controller Extensions ===
-
-        public static PartialViewResult PartialView(this Controller Controller, string ViewName, object Model, ViewDataDictionary ViewData)
-        {
-            if (Model != null)
-            {
-                ViewData.Model = Model;
-            }
-
-            return new PartialViewResult
-            {
-                ViewName = ViewName,
-                ViewData = ViewData,
-                TempData = Controller.TempData
-            };
-        }
-
-        #endregion
 
         //public static T GetSafeViewData<T>(ViewDataDictionary VdDictionary, string Key)
         //{
@@ -92,6 +75,29 @@
                 return DefaultNullValue;
             }
         }
+
+        #endregion
+
+        #region === MVC Controller Extensions ===
+
+        public static PartialViewResult PartialView(this Controller Controller, string ViewName, object Model, ViewDataDictionary ViewData)
+        {
+            if (Model != null)
+            {
+                ViewData.Model = Model;
+            }
+
+            ViewData.ModelState.Merge(Controller.ModelState);
+
+            return new PartialViewResult
+            {
+                ViewName = ViewName,
+                ViewData = ViewData,
+                TempData = Controller.TempData
+            };
+        }
+
+        #endregion
 
         /// <summary>
         /// Indicates whether the current request is coming from the Umbraco back-office. 
