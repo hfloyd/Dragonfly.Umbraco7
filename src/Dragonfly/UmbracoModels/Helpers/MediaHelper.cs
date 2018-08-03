@@ -1,5 +1,6 @@
 ﻿namespace Dragonfly.UmbracoModels.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DataTypes;
@@ -10,6 +11,51 @@
 
     public static class MediaHelper
     {
+        public static IMediaImage MediaIdToSafeImage(int? MediaId, UmbracoHelper Umbraco, IMediaImage DefaultImage = null)
+        {
+            if (MediaId == null || MediaId == 0)
+            {
+                return DefaultImage != null ? DefaultImage : new MediaImage();
+            }
+            else
+            {
+                var mediaNode = Umbraco.TypedMedia(MediaId);
+                if (mediaNode != null)
+                {
+                    var mImage = mediaNode.ToMediaImage();
+                    return mImage;
+                }
+                else
+                {
+                    //return default or empty image
+                return DefaultImage != null ? DefaultImage : new MediaImage();
+                }
+            }
+        }
+
+        public static IMediaImage MediaIdToSafeImage(Guid? MediaGuid, UmbracoHelper Umbraco, IMediaImage DefaultImage = null)
+        {
+            if (MediaGuid == null)
+            {
+                return DefaultImage != null ? DefaultImage : new MediaImage();
+            }
+            else
+            {
+                var mediaNode = Umbraco.TypedMedia(MediaGuid);
+                if (mediaNode != null)
+                {
+                    var mImage = mediaNode.ToMediaImage();
+                    return mImage;
+                }
+                else
+                {
+                    //return default or empty image
+                    return DefaultImage != null ? DefaultImage : new MediaImage();
+                }
+            }
+        }
+
+
         /// <summary>
         /// Checks if the model has a property and a value for the property and returns either the <see cref="IImage"/> representation
         /// of the property or the default <see cref="IMediaImage"/>
