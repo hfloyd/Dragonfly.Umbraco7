@@ -19,18 +19,18 @@
 
         #region === MVC Controller Extensions ===
 
-        public static PartialViewResult PartialView(this Controller controller, string viewName, object model, ViewDataDictionary viewData)
+        public static PartialViewResult PartialView(this Controller Controller, string ViewName, object Model, ViewDataDictionary ViewData)
         {
-            if (model != null)
+            if (Model != null)
             {
-                viewData.Model = model;
+                ViewData.Model = Model;
             }
 
             return new PartialViewResult
             {
-                ViewName = viewName,
-                ViewData = viewData,
-                TempData = controller.TempData
+                ViewName = ViewName,
+                ViewData = ViewData,
+                TempData = Controller.TempData
             };
         }
 
