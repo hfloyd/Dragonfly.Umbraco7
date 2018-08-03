@@ -15,8 +15,8 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>1.5.6</Version>
-    <PackageReleaseNotes>Addition of MVC Extension 'PartialView' accepting ViewData</PackageReleaseNotes>
+    <Version>1.5.7</Version>
+    <PackageReleaseNotes>Adding default value functionality to GetDictionaryOrPlaceholder()</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
