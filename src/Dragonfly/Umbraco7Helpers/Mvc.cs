@@ -3,7 +3,7 @@
     using System;
     using System.Web;
     using System.Web.Mvc;
-
+    
     public static class Mvc
     {
         private const string ThisClassName = "Dragonfly.Umbraco7Helpers.Mvc";
@@ -17,6 +17,24 @@
             return VdDictionary[Key] != null ? VdDictionary[Key] : DefaultNullValue;
         }
 
+        #region === MVC Controller Extensions ===
+
+        public static PartialViewResult PartialView(this Controller Controller, string ViewName, object Model, ViewDataDictionary ViewData)
+        {
+            if (Model != null)
+            {
+                ViewData.Model = Model;
+            }
+
+            return new PartialViewResult
+            {
+                ViewName = ViewName,
+                ViewData = ViewData,
+                TempData = Controller.TempData
+            };
+        }
+
+        #endregion
 
         //public static T GetSafeViewData<T>(ViewDataDictionary VdDictionary, string Key)
         //{
