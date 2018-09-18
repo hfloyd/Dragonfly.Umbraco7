@@ -15,10 +15,10 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>2.0.8</Version>
-    <AssemblyVersion>2.0.8.0</AssemblyVersion>
-    <FileVersion>2.0.8.0</FileVersion>
-    <PackageReleaseNotes>Fix to MVC Extension 'PartialView' to pass along existing ModelState</PackageReleaseNotes>
+    <Version>2.0.9</Version>
+    <AssemblyVersion>2.0.9.0</AssemblyVersion>
+    <FileVersion>2.0.9.0</FileVersion>
+    <PackageReleaseNotes>Addition of MvcFakes Models and ApiControllerHtmlHelper</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\net45\Dragonfly.Umbraco7.xml</DocumentationFile>
