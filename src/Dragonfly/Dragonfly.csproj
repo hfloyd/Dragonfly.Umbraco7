@@ -15,8 +15,8 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>1.5.9</Version>
-    <PackageReleaseNotes>Addition of MvcFakes Models and ApiControllerHtmlHelper</PackageReleaseNotes>
+    <Version>1.5.10</Version>
+    <PackageReleaseNotes>Addition of Development.MediaPath()</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
