@@ -13,6 +13,7 @@
 
         private static IFileService umbFileService = ApplicationContext.Current.Services.FileService;
         private static IContentService umbContentService = ApplicationContext.Current.Services.ContentService;
+        private static IMediaService umbMediaService = ApplicationContext.Current.Services.MediaService;
 
         /// <summary>
         /// Get the Alias of a template from its ID. If the Id is null or zero, "NONE" will be returned.
@@ -113,6 +114,53 @@
 
             return NodePathString.TrimStart(Separator);
 
+        }
+
+        public static string MediaPath(IPublishedContent UmbMediaNode, string Separator = " » ")
+        {
+
+            string nodePathString = string.Empty;
+
+            try
+            {
+                string pathIdsCSV = UmbMediaNode.Path;
+                nodePathString = MediaNodePathFromPathIdsCSV(pathIdsCSV, Separator);
+            }
+            catch (Exception ex)
+            {
+                var functionName = string.Format("{0}.NodePath", ThisClassName);
+                var errMsg = string.Format(
+                    "ERROR in {0} for node #{1} ({2}). [{3}]",
+                    functionName,
+                    UmbMediaNode.Id.ToString(),
+                    UmbMediaNode.Name,
+                    ex.Message);
+                LogHelper.Error<string>(errMsg, ex);
+
+                var returnMsg = string.Format("Unable to generate node path. (ERROR:{0})", ex.Message);
+                return returnMsg;
+            }
+
+            return nodePathString;
+        }
+
+        private static string MediaNodePathFromPathIdsCSV(string PathIdsCSV, string Separator = " » ")
+        {
+            string NodePathString = string.Empty;
+
+            string[] PathIdsArray = PathIdsCSV.Split(',');
+
+            foreach (var sId in PathIdsArray)
+            {
+                if (sId != "-1")
+                {
+                    IMedia GetNode = umbMediaService.GetById(Convert.ToInt32(sId));
+                    string NodeName = GetNode.Name;
+                    NodePathString = string.Concat(NodePathString, Separator, NodeName);
+                }
+            }
+
+            return NodePathString.TrimStart(Separator);
         }
 
         /// <summary>
