@@ -1,4 +1,4 @@
-﻿namespace Sprott.Core.MvcFakes
+﻿namespace Dragonfly.UmbracoModels.MvcFakes
 {
     using System;
     using System.IO;
