@@ -1,6 +1,8 @@
 ﻿namespace Dragonfly.Umbraco7Helpers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Umbraco.Core;
     using Umbraco.Core.Logging;
     using Umbraco.Core.Models;
@@ -42,127 +44,6 @@
             return TemplateAlias;
         }
 
-        public static string NodePath(IPublishedContent UmbContentNode, string Separator = " » ")
-        {
-            string nodePathString = string.Empty;
-
-            try
-            {
-                string pathIdsCSV = UmbContentNode.Path;
-                nodePathString = NodePathFromPathIdsCSV(pathIdsCSV, Separator);
-            }
-            catch (Exception ex)
-            {
-                var functionName = string.Format("{0}.NodePath", ThisClassName);
-                var errMsg = string.Format(
-                    "ERROR in {0} for node #{1} ({2}). [{3}]",
-                    functionName,
-                    UmbContentNode.Id.ToString(),
-                    UmbContentNode.Name,
-                    ex.Message);
-                LogHelper.Error<string>(errMsg, ex);
-
-                var returnMsg = string.Format("Unable to generate node path. (ERROR:{0})", ex.Message);
-                return returnMsg;
-            }
-
-            return nodePathString;
-        }
-
-        public static string NodePath(IContent UmbContentNode, string Separator = " » ")
-        {
-            string nodePathString = string.Empty;
-
-            try
-            {
-                string pathIdsCSV = UmbContentNode.Path;
-                nodePathString = NodePathFromPathIdsCSV(pathIdsCSV, Separator);
-            }
-            catch (Exception ex)
-            {
-                var functionName = string.Format("{0}.NodePath", ThisClassName);
-                var errMsg = string.Format(
-                    "ERROR in {0} for node #{1} ({2}). [{3}]",
-                    functionName,
-                    UmbContentNode.Id.ToString(),
-                    UmbContentNode.Name,
-                    ex.Message);
-                LogHelper.Error<string>(errMsg, ex);
-
-                var returnMsg = string.Format("Unable to generate node path. (ERROR:{0})", ex.Message);
-                return returnMsg;
-            }
-
-            return nodePathString;
-        }
-
-        private static string NodePathFromPathIdsCSV(string PathIdsCSV, string Separator = " » ")
-        {
-            string NodePathString = string.Empty;
-
-            string[] PathIdsArray = PathIdsCSV.Split(',');
-
-            foreach (var sId in PathIdsArray)
-            {
-                if (sId != "-1")
-                {
-                    IContent GetNode = umbContentService.GetById(Convert.ToInt32(sId));
-                    string NodeName = GetNode.Name;
-                    NodePathString = string.Concat(NodePathString, Separator, NodeName);
-                }
-            }
-
-            return NodePathString.TrimStart(Separator);
-
-        }
-
-        public static string MediaPath(IPublishedContent UmbMediaNode, string Separator = " » ")
-        {
-
-            string nodePathString = string.Empty;
-
-            try
-            {
-                string pathIdsCSV = UmbMediaNode.Path;
-                nodePathString = MediaNodePathFromPathIdsCSV(pathIdsCSV, Separator);
-            }
-            catch (Exception ex)
-            {
-                var functionName = string.Format("{0}.NodePath", ThisClassName);
-                var errMsg = string.Format(
-                    "ERROR in {0} for node #{1} ({2}). [{3}]",
-                    functionName,
-                    UmbMediaNode.Id.ToString(),
-                    UmbMediaNode.Name,
-                    ex.Message);
-                LogHelper.Error<string>(errMsg, ex);
-
-                var returnMsg = string.Format("Unable to generate node path. (ERROR:{0})", ex.Message);
-                return returnMsg;
-            }
-
-            return nodePathString;
-        }
-
-        private static string MediaNodePathFromPathIdsCSV(string PathIdsCSV, string Separator = " » ")
-        {
-            string NodePathString = string.Empty;
-
-            string[] PathIdsArray = PathIdsCSV.Split(',');
-
-            foreach (var sId in PathIdsArray)
-            {
-                if (sId != "-1")
-                {
-                    IMedia GetNode = umbMediaService.GetById(Convert.ToInt32(sId));
-                    string NodeName = GetNode.Name;
-                    NodePathString = string.Concat(NodePathString, Separator, NodeName);
-                }
-            }
-
-            return NodePathString.TrimStart(Separator);
-        }
-
         /// <summary>
         /// Lookup a descendant page in the site by its DocType
         /// </summary>
@@ -174,7 +55,7 @@
         {
             var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
 
-            var xPathExpr = string.Format("root/{0}[@id={1}]//{2}", SiteRootDocTypeAlias, SiteRootNodeId, DoctypeAlias);
+            var xPathExpr = String.Format("root/{0}[@id={1}]//{2}", SiteRootDocTypeAlias, SiteRootNodeId, DoctypeAlias);
 
             var page = umbracoHelper.ContentSingleAtXPath(xPathExpr);
             if (page.Id > 0)
@@ -186,5 +67,200 @@
                 return null;
             }
         }
+
+        /// <summary>
+        /// Return a list of Prevalues for a given DataType by Name
+        /// </summary>
+        /// <param name="DataTypeName"></param>
+        /// <returns></returns>
+        public static IEnumerable<PreValue> GetPrevaluesForDataType(string DataTypeName)
+        {
+            IEnumerable<PreValue> toReturn = new List<PreValue>();
+
+            IDataTypeDefinition dataType = ApplicationContext.Current.Services.DataTypeService.GetDataTypeDefinitionByName(DataTypeName);
+
+            if (dataType == null)
+            {
+                return toReturn;
+            }
+
+            PreValueCollection preValues = ApplicationContext.Current.Services.DataTypeService.GetPreValuesCollectionByDataTypeId(dataType.Id);
+
+            if (preValues == null)
+            {
+                return toReturn;
+            }
+
+            IDictionary<string, PreValue> tempDictionary = preValues.FormatAsDictionary();
+
+            toReturn = tempDictionary.Select(n => n.Value);
+
+            return toReturn;
+        }
+
+        #region Node Paths
+
+        public static string NodePath(IPublishedContent UmbContentNode, string Separator = " » ")
+        {
+            string nodePathString = String.Empty;
+
+            try
+            {
+                string pathIdsCSV = UmbContentNode.Path;
+                nodePathString = NodePathFromPathIdsCSV(pathIdsCSV, Separator);
+            }
+            catch (Exception ex)
+            {
+                var functionName = String.Format("{0}.NodePath", ThisClassName);
+                var errMsg = String.Format(
+                    "ERROR in {0} for node #{1} ({2}). [{3}]",
+                    functionName,
+                    UmbContentNode.Id.ToString(),
+                    UmbContentNode.Name,
+                    ex.Message);
+                LogHelper.Error<string>(errMsg, ex);
+
+                var returnMsg = String.Format("Unable to generate node path. (ERROR:{0})", ex.Message);
+                return returnMsg;
+            }
+
+            return nodePathString;
+        }
+
+        public static string NodePath(IContent UmbContentNode, string Separator = " » ")
+        {
+            string nodePathString = String.Empty;
+
+            try
+            {
+                string pathIdsCSV = UmbContentNode.Path;
+                nodePathString = NodePathFromPathIdsCSV(pathIdsCSV, Separator);
+            }
+            catch (Exception ex)
+            {
+                var functionName = String.Format("{0}.NodePath", ThisClassName);
+                var errMsg = String.Format(
+                    "ERROR in {0} for node #{1} ({2}). [{3}]",
+                    functionName,
+                    UmbContentNode.Id.ToString(),
+                    UmbContentNode.Name,
+                    ex.Message);
+                LogHelper.Error<string>(errMsg, ex);
+
+                var returnMsg = String.Format("Unable to generate node path. (ERROR:{0})", ex.Message);
+                return returnMsg;
+            }
+
+            return nodePathString;
+        }
+
+        private static string NodePathFromPathIdsCSV(string PathIdsCSV, string Separator = " » ")
+        {
+            string NodePathString = String.Empty;
+
+            string[] PathIdsArray = PathIdsCSV.Split(',');
+
+            foreach (var sId in PathIdsArray)
+            {
+                if (sId != "-1")
+                {
+                    IContent GetNode = umbContentService.GetById(Convert.ToInt32(sId));
+                    string NodeName = GetNode.Name;
+                    NodePathString = String.Concat(NodePathString, Separator, NodeName);
+                }
+            }
+
+            return NodePathString.TrimStart(Separator);
+
+        }
+
+        public static string MediaPath(IPublishedContent UmbMediaNode, string Separator = " » ")
+        {
+
+            string nodePathString = String.Empty;
+
+            try
+            {
+                string pathIdsCSV = UmbMediaNode.Path;
+                nodePathString = MediaNodePathFromPathIdsCSV(pathIdsCSV, Separator);
+            }
+            catch (Exception ex)
+            {
+                var functionName = String.Format("{0}.NodePath", ThisClassName);
+                var errMsg = String.Format(
+                    "ERROR in {0} for node #{1} ({2}). [{3}]",
+                    functionName,
+                    UmbMediaNode.Id.ToString(),
+                    UmbMediaNode.Name,
+                    ex.Message);
+                LogHelper.Error<string>(errMsg, ex);
+
+                var returnMsg = String.Format("Unable to generate node path. (ERROR:{0})", ex.Message);
+                return returnMsg;
+            }
+
+            return nodePathString;
+        }
+
+        private static string MediaNodePathFromPathIdsCSV(string PathIdsCSV, string Separator = " » ")
+        {
+            string NodePathString = String.Empty;
+
+            string[] PathIdsArray = PathIdsCSV.Split(',');
+
+            foreach (var sId in PathIdsArray)
+            {
+                if (sId != "-1")
+                {
+                    IMedia GetNode = umbMediaService.GetById(Convert.ToInt32(sId));
+                    string NodeName = GetNode.Name;
+                    NodePathString = String.Concat(NodePathString, Separator, NodeName);
+                }
+            }
+
+            return NodePathString.TrimStart(Separator);
+        }
+
+        #endregion
+
+        #region Udi
+
+        /// <summary>
+        /// Converts a list of published content to a comma-separated string of UDI values suitable for using with the content service
+        /// </summary>
+        /// <param name="content">The published content</param>
+        /// <returns>A CSV string of UID values eg. umb://document/56c0f0ef0ac74b58ae1cce16db1476af,umb://document/5cbac9249ffa4f5ab4f5e0db1599a75b</returns>
+        public static string ToUdiCsv(this IEnumerable<IPublishedContent> IPubsEnum)
+        {
+            var list = new List<string>();
+            if (IPubsEnum != null)
+            {
+                foreach (var publishedContent in IPubsEnum)
+                {
+                    if (publishedContent != null)
+                    {
+                        var udi = Umbraco.Core.Udi.Create(Umbraco.Core.Constants.UdiEntityType.Document, publishedContent.GetKey());
+                        list.Add(udi.ToString());
+                    }
+                }
+            }
+            return String.Join(",", list);
+        }
+
+        public static string ToUdiString(this IPublishedContent IPub)
+        {
+            if (IPub != null)
+            {
+                var udi = Umbraco.Core.Udi.Create(Umbraco.Core.Constants.UdiEntityType.Document, IPub.GetKey());
+                return udi.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        #endregion
     }
+
 }
