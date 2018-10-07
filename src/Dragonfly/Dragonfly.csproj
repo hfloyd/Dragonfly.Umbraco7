@@ -15,8 +15,8 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>1.5.11</Version>
-    <PackageReleaseNotes>Small namespace fix</PackageReleaseNotes>
+    <Version>1.5.12</Version>
+    <PackageReleaseNotes>Adding IContentExtensions + Udi functions</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
