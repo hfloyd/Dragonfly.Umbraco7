@@ -228,9 +228,11 @@
         /// <summary>
         /// Converts a list of published content to a comma-separated string of UDI values suitable for using with the content service
         /// </summary>
-        /// <param name="content">The published content</param>
+        /// <param name="IPubsEnum">A collection of IPublishedContent</param>
+        /// <param name="UdiType">UDI Type to use (document, media, etc) (use 'Umbraco.Core.Constants.UdiEntityType.' to specify)
+        /// If excluded, will try to use the DocTypeAlias to determine the UDI Type</param>
         /// <returns>A CSV string of UID values eg. umb://document/56c0f0ef0ac74b58ae1cce16db1476af,umb://document/5cbac9249ffa4f5ab4f5e0db1599a75b</returns>
-        public static string ToUdiCsv(this IEnumerable<IPublishedContent> IPubsEnum)
+        public static string ToUdiCsv(this IEnumerable<IPublishedContent> IPubsEnum, string UdiType = "")
         {
             var list = new List<string>();
             if (IPubsEnum != null)
@@ -239,25 +241,57 @@
                 {
                     if (publishedContent != null)
                     {
-                        var udi = Umbraco.Core.Udi.Create(Umbraco.Core.Constants.UdiEntityType.Document, publishedContent.GetKey());
-                        list.Add(udi.ToString());
+                       var udi = ToUdiString(publishedContent, UdiType);
+                       list.Add(udi.ToString());
                     }
                 }
             }
             return String.Join(",", list);
         }
 
-        public static string ToUdiString(this IPublishedContent IPub)
+        /// <summary>
+        /// Converts an IPublishedContent to a UDI string suitable for using with the content service
+        /// </summary>
+        /// <param name="IPub">IPublishedContent</param>
+        /// <param name="UdiType">UDI Type to use (document, media, etc) (use 'Umbraco.Core.Constants.UdiEntityType.' to specify)
+        /// If excluded, will try to use the DocTypeAlias to determine the UDI Type</param>
+        /// <returns></returns>
+        public static string ToUdiString(this IPublishedContent IPub, string UdiType="")
         {
             if (IPub != null)
             {
-                var udi = Umbraco.Core.Udi.Create(Umbraco.Core.Constants.UdiEntityType.Document, IPub.GetKey());
+                var udiType = UdiType != ""? UdiType : GetUdiType(IPub);
+                var udi = Umbraco.Core.Udi.Create(udiType, IPub.GetKey());
                 return udi.ToString();
             }
             else
             {
                 return "";
             }
+        }
+
+        private static string GetUdiType(IPublishedContent PublishedContent)
+        {
+            var udiType = Umbraco.Core.Constants.UdiEntityType.Document;
+
+            //if it's a known (default) media or member type, use that, otherwise, document is assumed
+            switch (PublishedContent.DocumentTypeAlias)
+            {
+                case Constants.Conventions.MediaTypes.Image:
+                    udiType = Umbraco.Core.Constants.UdiEntityType.Media;
+                    break;
+                case Constants.Conventions.MediaTypes.File:
+                    udiType = Umbraco.Core.Constants.UdiEntityType.Media;
+                    break;
+                case Constants.Conventions.MediaTypes.Folder:
+                    udiType = Umbraco.Core.Constants.UdiEntityType.Media;
+                    break;
+                case Constants.Conventions.MemberTypes.DefaultAlias:
+                    udiType = Umbraco.Core.Constants.UdiEntityType.Member;
+                    break;
+            }
+
+            return udiType;
         }
 
         #endregion
