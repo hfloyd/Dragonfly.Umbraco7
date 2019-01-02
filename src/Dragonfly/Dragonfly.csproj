@@ -15,8 +15,8 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>1.6.0</Version>
-    <PackageReleaseNotes>Adding MediaFinderService and updating Udi functions</PackageReleaseNotes>
+    <Version>1.6.2</Version>
+    <PackageReleaseNotes>Adding additional logging and error prevention to MediaExtensions</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
