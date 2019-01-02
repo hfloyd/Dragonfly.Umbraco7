@@ -192,7 +192,7 @@
                 Extension = MediaContent.GetSafeString("umbracoExtension"),
                 Name = name,
                 ImageAltText = altText,
-                ImageAltDictionaryKey = AltDictionary != ""? AltDictionary : MediaContent.GetSafeString("ImageAltDictionaryKey"),
+                ImageAltDictionaryKey = AltDictionary != "" ? AltDictionary : MediaContent.GetSafeString("ImageAltDictionaryKey"),
                 OriginalPixelWidth = MediaContent.GetSafeInt("umbracoWidth", 0),
                 OriginalPixelHeight = MediaContent.GetSafeInt("umbracoHeight", 0)
             };
@@ -288,7 +288,7 @@
                 //most likely because only a file path is present, no crop data
                 return ImgUrlToImage(ImageCropperProperty, ImageName, AltText, AltDictionary);
             }
-            
+
         }
 
         /// <summary>
@@ -308,42 +308,54 @@
                 Id = 0
             };
 
-            //var jsonCrop = JObject.Parse(ImageCropperProperty);
-            var jsonCrop = ImageCropperProperty;
-            img.JsonCropData = jsonCrop;
-
-            JToken src;
-            var srcFound = jsonCrop.TryGetValue("src", out src);
-            if (srcFound)
+            if (ImageCropperProperty != null)
             {
-                img.Url = src.ToString();
-            }
-            else
-            {
-                img.Url = "";
-            }
+                try
+                {
+                    //var jsonCrop = JObject.Parse(ImageCropperProperty);
+                    var jsonCrop = ImageCropperProperty;
+                    img.JsonCropData = jsonCrop;
 
-            JToken focalPoint;
-            var focalPointFound = jsonCrop.TryGetValue("focalPoint", out focalPoint);
-            if (focalPointFound)
-            {
-                img.HasFocalPoint = true;
+                    JToken src;
+                    var srcFound = jsonCrop.TryGetValue("src", out src);
+                    if (srcFound)
+                    {
+                        img.Url = src.ToString();
+                    }
+                    else
+                    {
+                        img.Url = "";
+                    }
 
-                var left = focalPoint["left"].ToString();
-                img.FocalPointLeft = Convert.ToDouble(left);
+                    JToken focalPoint;
+                    var focalPointFound = jsonCrop.TryGetValue("focalPoint", out focalPoint);
+                    if (focalPointFound)
+                    {
+                        img.HasFocalPoint = true;
 
-                var top = focalPoint["top"].ToString();
-                img.FocalPointTop = Convert.ToDouble(top);
+                        var left = focalPoint["left"].ToString();
+                        img.FocalPointLeft = Convert.ToDouble(left);
+
+                        var top = focalPoint["top"].ToString();
+                        img.FocalPointTop = Convert.ToDouble(top);
+                    }
+                    else
+                    {
+                        img.HasFocalPoint = false;
+                        img.FocalPointLeft = 0;
+                        img.FocalPointTop = 0;
+                    }
+
+                    //Get image info
+                    img = AddFileInfoFromServer(img);
+                }
+                catch (Exception e)
+                {
+                    var msg =
+                        $"{ThisClassName}.CropperPropertyToImage() ERROR [ImageCropperProperty:{ImageCropperProperty}] [ImageName: {ImageName}]";
+                    LogHelper.Error<IMediaImage>(msg, e);
+                }
             }
-            else
-            {
-                img.HasFocalPoint = false;
-                img.FocalPointLeft = 0;
-                img.FocalPointTop = 0;
-            }
-
-            //Get image info
-            img = AddFileInfoFromServer(img);
 
             return img;
         }
@@ -369,30 +381,52 @@
                 FocalPointTop = 0
             };
 
-            img = AddFileInfoFromServer(img);
+            if (ImageSrcUrl != "")
+            {
+                try
+                {
+                    img = AddFileInfoFromServer(img);
+                }
+                catch (Exception e)
+                {
+                    var msg =
+                        $"{ThisClassName}.ImgUrlToImage() ERROR [ImageSrcUrl:{ImageSrcUrl}] [ImageName: {ImageName}]";
+                    LogHelper.Error<IMediaImage>(msg, e);
+                }
+            }
 
             return img;
         }
 
         private static MediaImage AddFileInfoFromServer(MediaImage MediaImage)
         {
-            //Get image info
-            var serverPath = System.Web.HttpContext.Current.Server.MapPath(MediaImage.Url);
-
-            try
+            if (MediaImage.Url != "")
             {
-                var imgFileInfo = new System.IO.FileInfo(serverPath);
-                MediaImage.Bytes = Convert.ToInt32(imgFileInfo.Length);
-                MediaImage.Extension = imgFileInfo.Extension;
+                //Get image info
+                var serverPath = System.Web.HttpContext.Current.Server.MapPath(MediaImage.Url);
 
-                var imgDimensions = System.Drawing.Image.FromFile(serverPath).Size;
-                MediaImage.OriginalPixelWidth = imgDimensions.Width;
-                MediaImage.OriginalPixelHeight = imgDimensions.Height;
+                try
+                {
+                    var imgFileInfo = new System.IO.FileInfo(serverPath);
+                    MediaImage.Bytes = Convert.ToInt32(imgFileInfo.Length);
+                    MediaImage.Extension = imgFileInfo.Extension;
+
+                    var imgDimensions = System.Drawing.Image.FromFile(serverPath).Size;
+                    MediaImage.OriginalPixelWidth = imgDimensions.Width;
+                    MediaImage.OriginalPixelHeight = imgDimensions.Height;
+                }
+                catch (System.IO.FileNotFoundException fnfEx)
+                {
+                    var msg =
+                        $"{ThisClassName}.AddFileInfoFromServer() File Not Found on Disk: '{serverPath}'. Unable to get file details for IMediaImage [MediaImage: {MediaImage.Name}]";
+                    LogHelper.Error<FileInfo>(msg, fnfEx);
+                }
             }
-            catch (System.IO.FileNotFoundException fnfEx)
+            else
             {
-                var msg = string.Format("{0}.AddFileInfoFromServer() File Not Found on Disk: '{1}'. Unable to get file details for IMediaImage", ThisClassName, serverPath);
-                LogHelper.Error<FileInfo>(msg, fnfEx);
+                var msg =
+                    $"{ThisClassName}.AddFileInfoFromServer() - No Image URL present for IMediaImage '{MediaImage.Name}'";
+                LogHelper.Info<MediaImage>(msg);
             }
 
             return MediaImage;
