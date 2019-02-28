@@ -1,5 +1,6 @@
 ﻿namespace Dragonfly.UmbracoModels
 {
+    using System.Collections.Generic;
     using System.Web;
     using Newtonsoft.Json.Linq;
     using Umbraco.Core.Models;
@@ -156,6 +157,80 @@
             return url;
         }
 
+        /// <summary>
+        /// Returns a url for a resized version
+        /// </summary>
+        /// <param name="Height">Pixel Height (use zero to exclude value)</param>
+        /// <param name="Width">Pixel Width (use zero to exclude value)</param>
+        /// <param name="BgColorForPadding">Hex code for color used to fill background, since there is no up-sizing. Example: "#FFFFFF"</param>
+        /// <param name="AdditionalParameters">List of Key/Value Pairs of additional ImageProcessor options</param>
+        /// <returns></returns>
+        public string GetResizeUrl(int Width, int Height, string BgColorForPadding, IEnumerable<KeyValuePair<string, string>> AdditionalParameters = null)
+        {
+            var baseUrl = this.Url;
+            var bgColor = BgColorForPadding.Replace("#", "");
+
+            var dimensions = "";
+            if (Width > 0 & Height > 0)
+            {
+                dimensions = $"&width={Width}&height={Height}";
+            }
+            else if (Width == 0 & Height > 0)
+            {
+                dimensions = $"&height={Height}";
+            }
+            else if (Width > 0 & Height == 0)
+            {
+                dimensions = $"&width={Width}";
+            }
+
+            var additionalParams = "";
+            if (AdditionalParameters != null)
+            {
+                foreach (var kv in AdditionalParameters)
+                {
+                    var param = $"&{kv.Key}={kv.Value}";
+                    additionalParams = additionalParams + param;
+                }
+            }
+
+            var url = $"{baseUrl}?{dimensions}&upscale=false&bgcolor={bgColor}{additionalParams}";
+
+            return url;
+        }
+
+        /// <summary>
+        /// Returns a url for a resized version
+        /// </summary>
+        /// <param name="Height">Pixel Height (use zero to exclude value)</param>
+        /// <param name="Width">Pixel Width (use zero to exclude value)</param>
+        /// <param name="BgColorForPadding">Hex code for color used to fill background, since there is no up-sizing. Example: "#FFFFFF"</param>
+        /// <returns></returns>
+        public string GetResizeUrl(int Width, int Height, string BgColorForPadding)
+        {
+            return GetResizeUrl(Width, Height, BgColorForPadding, AdditionalParameters: null);
+        }
+
+        /// <summary>
+        /// Returns a url for a resized version
+        /// </summary>
+        /// <param name="Height">Pixel Height (use zero to exclude value)</param>
+        /// <param name="Width">Pixel Width (use zero to exclude value)</param>
+        /// <param name="BgColorForPadding">Hex code for color used to fill background, since there is no up-sizing. Example: "#FFFFFF"</param>
+        /// <param name="AdditionalParametersAsString">Separated string of Key/Value Pairs of additional ImageProcessor options</param>
+        /// <returns></returns>
+        public string GetResizeUrl(int Width, int Height, string BgColorForPadding, string AdditionalParametersAsString)
+        {
+            if (AdditionalParametersAsString == "")
+            {
+                return GetResizeUrl(Width, Height, BgColorForPadding, AdditionalParameters: null);
+            }
+
+            var kvParams = Dragonfly.NetHelpers.Strings.ParseStringToKvPairs(AdditionalParametersAsString);
+
+            return GetResizeUrl(Width, Height, BgColorForPadding, AdditionalParameters: kvParams);
+        }
+        
         /// <summary>
         /// Gets the full url, including domain.
         /// </summary>
