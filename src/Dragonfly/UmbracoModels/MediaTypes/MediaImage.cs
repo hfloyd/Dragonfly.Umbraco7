@@ -173,15 +173,15 @@
             var dimensions = "";
             if (Width > 0 & Height > 0)
             {
-                dimensions = $"&width={Width}&height={Height}";
+                dimensions = $"width={Width}&height={Height}";
             }
             else if (Width == 0 & Height > 0)
             {
-                dimensions = $"&height={Height}";
+                dimensions = $"height={Height}";
             }
             else if (Width > 0 & Height == 0)
             {
-                dimensions = $"&width={Width}";
+                dimensions = $"width={Width}";
             }
 
             var additionalParams = "";
