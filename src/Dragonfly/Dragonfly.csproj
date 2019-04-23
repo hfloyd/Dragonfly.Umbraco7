@@ -15,9 +15,9 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>2.1.4</Version>
-    <AssemblyVersion>2.1.4.0</AssemblyVersion>
-    <FileVersion>2.1.4.0</FileVersion>
+    <Version>2.1.5</Version>
+    <AssemblyVersion>2.1.5.0</AssemblyVersion>
+    <FileVersion>2.1.5.0</FileVersion>
     <PackageReleaseNotes>Removing Nuget install of UmbracoCMS.Core (to avoid overwriting with old versions)</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,6 +25,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dragonfly.Net" Version="1.12.2" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" PrivateAssets="All" />
+    <PackageReference Include="UmbracoCms.Core" Version="7.9.1" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
