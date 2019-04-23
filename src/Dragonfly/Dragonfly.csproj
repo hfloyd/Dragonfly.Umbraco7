@@ -15,13 +15,11 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>1.6.3</Version>
-    <PackageReleaseNotes>Adding "GetResizeUrl()" method to MediaImage</PackageReleaseNotes>
+    <Version>1.6.4</Version>
+    <PackageReleaseNotes>Removing Nuget install of UmbracoCMS.Core (to avoid overwriting with old versions)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dragonfly.Net" Version="1.12.2" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
-    <PackageReference Include="UmbracoCms.Core" Version="7.7.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
