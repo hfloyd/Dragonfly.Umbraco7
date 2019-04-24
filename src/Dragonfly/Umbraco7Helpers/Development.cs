@@ -9,6 +9,9 @@
     using Umbraco.Core.Services;
     using Umbraco.Web;
 
+    /// <summary>
+    /// Development-related helpers (For working with Node Paths, Templates, DataTypes, Udis, etc.)
+    /// </summary>
     public static class Development
     {
         private const string ThisClassName = "Dragonfly.Umbraco7Helpers.Development";
@@ -100,6 +103,12 @@
 
         #region Node Paths
 
+        /// <summary>
+        /// Gets a string-representation of the full Path to a Content Node in the Content Tree
+        /// </summary>
+        /// <param name="UmbContentNode">Content Node to get a Path for</param>
+        /// <param name="Separator">string used to separate the parts of the path (default is  ») </param>
+        /// <returns></returns>
         public static string NodePath(IPublishedContent UmbContentNode, string Separator = " » ")
         {
             string nodePathString = String.Empty;
@@ -127,6 +136,12 @@
             return nodePathString;
         }
 
+        /// <summary>
+        /// Gets a string-representation of the full Path to a Content Node in the Content Tree
+        /// </summary>
+        /// <param name="UmbContentNode">Content Node to get a Path for</param>
+        /// <param name="Separator">string used to separate the parts of the path (default is  ») </param>
+        /// <returns></returns>
         public static string NodePath(IContent UmbContentNode, string Separator = " » ")
         {
             string nodePathString = String.Empty;
@@ -154,6 +169,12 @@
             return nodePathString;
         }
 
+        /// <summary>
+        /// Gets a string-representation of the full Path to a Content Node in the Content Tree
+        /// </summary>
+        /// <param name="PathIdsCSV">CSV string of path ids to parse</param>
+        /// <param name="Separator">string used to separate the parts of the path (default is  ») </param>
+        /// <returns></returns>
         private static string NodePathFromPathIdsCSV(string PathIdsCSV, string Separator = " » ")
         {
             string NodePathString = String.Empty;
@@ -174,6 +195,12 @@
 
         }
 
+        /// <summary>
+        /// Gets a string-representation of the full Path to a Media Node in the Media Tree
+        /// </summary>
+        /// <param name="UmbMediaNode">Media Node to get a Path for</param>
+        /// <param name="Separator">string used to separate the parts of the path (default is  ») </param>
+        /// <returns></returns>
         public static string MediaPath(IPublishedContent UmbMediaNode, string Separator = " » ")
         {
 
@@ -202,6 +229,12 @@
             return nodePathString;
         }
 
+        /// <summary>
+        /// Gets a string-representation of the full Path to a Media Node in the Media Tree
+        /// </summary>
+        /// <param name="PathIdsCSV">CSV string of path ids to parse</param>
+        /// <param name="Separator">string used to separate the parts of the path (default is  ») </param>
+        /// <returns></returns>
         private static string MediaNodePathFromPathIdsCSV(string PathIdsCSV, string Separator = " » ")
         {
             string NodePathString = String.Empty;

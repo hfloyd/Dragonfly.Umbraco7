@@ -101,7 +101,7 @@
         /// </returns>
         public static IEnumerable<IMediaImage> ToImages(this IEnumerable<IPublishedContent> contents)
         {
-            return contents.ToList().Select(x => x.ToImage());
+            return contents.ToList().Select(x => x.ToMediaImage());
         }
 
 
@@ -713,6 +713,7 @@
             if (propValue != null)
             {
                 var type = propValue.GetType().ToString();
+
                 if (type == "Umbraco.Web.PublishedCache.XmlPublishedCache.PublishedMediaCache+DictionaryPublishedContent")
                 {
                     //this IS an Umbraco media item
@@ -720,11 +721,12 @@
                     if (umbMedia.Id != 0)
                     {
                         var mediaNode = umbraco.TypedMedia(umbMedia.Id) as IPublishedContent;
-                        var mImage = mediaNode.ToImage();
+                        var mImage = mediaNode.ToMediaImage();
 
                         return mImage;
                     }
                 }
+
                 if (type == "Umbraco.Web.Models.ImageCropDataSet")
                 {
                     var cropData = propValue as Umbraco.Web.Models.ImageCropDataSet;
@@ -735,13 +737,29 @@
                         return mImage;
                     }
                 }
+
+                if (propValue is IPublishedContent)
+                {
+                    var iPub = propValue as IPublishedContent;
+                    if (iPub.ContentType.Alias == "Image")
+                    {
+                        //this IS an Umbraco media item
+                        var mImage = iPub.ToMediaImage();
+                        return mImage;
+                    }
+                }
+
+                //if (propValue is IEnumerable<IPublishedContent>)
+                //{
+                //}
+
                 else
                 {
                     var mediaContent = content.GetSafeMntpContent(umbraco, propertyAlias, true).ToArray();
 
                     if (mediaContent.Any())
                     {
-                        return mediaContent.Where(x => x != null).Select(x => x.ToImage()).FirstOrDefault();
+                        return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage()).FirstOrDefault();
                     }
                     else
                     {
@@ -888,7 +906,7 @@
 
             if (mediaContent.Any())
             {
-                return mediaContent.Where(x => x != null).Select(x => x.ToImage());
+                return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage());
             }
             else
             {
@@ -929,7 +947,7 @@
 
             if (mediaContent.Any())
             {
-                return mediaContent.Where(x => x != null).Select(x => x.ToImage());
+                return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage());
             }
             else
             {

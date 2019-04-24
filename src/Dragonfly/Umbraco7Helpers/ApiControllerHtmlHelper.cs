@@ -7,6 +7,9 @@
     using System.Web.Routing;
     using Dragonfly.UmbracoModels.MvcFakes;
 
+    /// <summary>
+    /// Allows you to 'Fake' a Controller so you can pass a model into a View and get back HTML via an API call
+    /// </summary>
     public static class ApiControllerHtmlHelper
     {
         private static ControllerContext ApiControllerToMvcController(HttpControllerContext ThisControllerContext, HttpContext CurrentHttpContext)

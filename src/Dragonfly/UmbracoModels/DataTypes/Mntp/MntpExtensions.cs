@@ -105,7 +105,6 @@
                         returnNodes.Add(node);
                     }
                 }
-
             }
 
             return returnNodes;
