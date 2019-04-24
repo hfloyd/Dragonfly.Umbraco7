@@ -466,6 +466,13 @@
                        : null;
         }
 
+        /// <summary>
+        /// Returns the value of the first valid, non-blank string-type property
+        /// on an IPublishedContent from a list of possible properties
+        /// </summary>
+        /// <param name="content">Content Node to retrieve a property value from</param>
+        /// <param name="PropsToTest">List of property aliases to look for, in order of priority</param>
+        /// <returns></returns>
         public static string GetFirstMatchingPropValueString(this IPublishedContent content, IEnumerable<string> PropsToTest)
         {
             string str = "";
@@ -485,6 +492,13 @@
             return str;
         }
 
+        /// <summary>
+        /// Returns the value of the first valid, non-blank DateTime-type property
+        /// on an IPublishedContent from a list of possible properties
+        /// </summary>
+        /// <param name="content">Content Node to retrieve a property value from</param>
+        /// <param name="PropsToTest">List of property aliases to look for, in order of priority</param>
+        /// <returns></returns>
         public static DateTime GetFirstMatchingPropValueDate(this IPublishedContent content, IEnumerable<string> PropsToTest)
         {
             var defaultVal = DateTime.MinValue;
@@ -505,6 +519,13 @@
             return returnVal;
         }
 
+        /// <summary>
+        /// Returns the value of the first valid, non-blank int-type property
+        /// on an IPublishedContent from a list of possible properties
+        /// </summary>
+        /// <param name="content">Content Node to retrieve a property value from</param>
+        /// <param name="PropsToTest">List of property aliases to look for, in order of priority</param>
+        /// <returns></returns>
         public static Int32 GetFirstMatchingPropValueInt(this IPublishedContent content, IEnumerable<string> PropsToTest)
         {
             var defaultVal = 0;
@@ -525,6 +546,13 @@
             return returnVal;
         }
 
+        /// <summary>
+        /// Returns the value of the first valid, non-blank boolean-type property
+        /// on an IPublishedContent from a list of possible properties
+        /// </summary>
+        /// <param name="content">Content Node to retrieve a property value from</param>
+        /// <param name="PropsToTest">List of property aliases to look for, in order of priority</param>
+        /// <returns></returns>
         public static bool GetFirstMatchingPropValueBool(this IPublishedContent content, IEnumerable<string> PropsToTest)
         {
             var defaultVal = false;
@@ -545,6 +573,13 @@
             return returnVal;
         }
 
+        /// <summary>
+        /// Returns the value of the first valid, non-blank media image property
+        /// on an IPublishedContent from a list of possible properties
+        /// </summary>
+        /// <param name="content">Content Node to retrieve a property value from</param>
+        /// <param name="PropsToTest">List of property aliases to look for, in order of priority</param>
+        /// <returns></returns>
         public static MediaImage GetFirstMatchingPropValueMediaImage(this IPublishedContent content, IEnumerable<string> PropsToTest, UmbracoHelper umbraco)
         {
             MediaImage mediaImg = new MediaImage();

@@ -101,7 +101,7 @@
                 //see if this is a media id...
                 dynamic umbMedia = Umbraco.TypedMedia(PropValue);
                 var mediaNode = Umbraco.TypedMedia(umbMedia.Id) as IPublishedContent;
-                var mImage = mediaNode.ToImage();
+                var mImage = mediaNode.ToMediaImage();
 
                 return mImage;
             }
@@ -141,7 +141,7 @@
 
             if (TopMediaItem.DocumentTypeAlias != "Folder")
             {
-                var mediaImage = TopMediaItem.ToImage();
+                var mediaImage = TopMediaItem.ToMediaImage();
                 images.Add(mediaImage as MediaImage);
             }
             else
@@ -157,7 +157,7 @@
                     }
                     else
                     {
-                        images.Add(media.ToImage() as MediaImage);
+                        images.Add(media.ToMediaImage() as MediaImage);
                     }
                 }
             }
@@ -185,7 +185,7 @@
                 if (umbMedia.Id != 0)
                 {
                     var mediaNode = umbraco.TypedMedia(umbMedia.Id) as IPublishedContent;
-                    var mImage = mediaNode.ToImage();
+                    var mImage = mediaNode.ToMediaImage();
 
                     return mImage;
                 }
@@ -196,7 +196,7 @@
 
                 if (mediaContent.Any())
                 {
-                    return mediaContent.Where(x => x != null).Select(x => x.ToImage()).FirstOrDefault();
+                    return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage()).FirstOrDefault();
                 }
                 else
                 {
@@ -249,7 +249,7 @@
 
             if (mediaContent.Any())
             {
-                return mediaContent.Where(x => x != null).Select(x => x.ToImage());
+                return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage());
             }
             else
             {
