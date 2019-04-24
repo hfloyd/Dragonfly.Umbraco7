@@ -713,6 +713,7 @@
             if (propValue != null)
             {
                 var type = propValue.GetType().ToString();
+
                 if (type == "Umbraco.Web.PublishedCache.XmlPublishedCache.PublishedMediaCache+DictionaryPublishedContent")
                 {
                     //this IS an Umbraco media item
@@ -725,6 +726,7 @@
                         return mImage;
                     }
                 }
+
                 if (type == "Umbraco.Web.Models.ImageCropDataSet")
                 {
                     var cropData = propValue as Umbraco.Web.Models.ImageCropDataSet;
@@ -735,6 +737,22 @@
                         return mImage;
                     }
                 }
+
+                if (propValue is IPublishedContent)
+                {
+                    var iPub = propValue as IPublishedContent;
+                    if (iPub.ContentType.Alias == "Image")
+                    {
+                        //this IS an Umbraco media item
+                        var mImage = iPub.ToImage();
+                        return mImage;
+                    }
+                }
+
+                //if (propValue is IEnumerable<IPublishedContent>)
+                //{
+                //}
+
                 else
                 {
                     var mediaContent = content.GetSafeMntpContent(umbraco, propertyAlias, true).ToArray();
