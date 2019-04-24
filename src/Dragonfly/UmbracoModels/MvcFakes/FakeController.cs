@@ -6,7 +6,7 @@
 
     public class FakeController : ControllerBase
     {
-        public void Execute(RequestContext requestContext)
+        protected override void Execute(RequestContext requestContext)
         {
             throw new InvalidOperationException();
         }

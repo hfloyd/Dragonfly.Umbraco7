@@ -101,7 +101,7 @@
         /// </returns>
         public static IEnumerable<IMediaImage> ToImages(this IEnumerable<IPublishedContent> contents)
         {
-            return contents.ToList().Select(x => x.ToImage());
+            return contents.ToList().Select(x => x.ToMediaImage());
         }
 
 
@@ -721,7 +721,7 @@
                     if (umbMedia.Id != 0)
                     {
                         var mediaNode = umbraco.TypedMedia(umbMedia.Id) as IPublishedContent;
-                        var mImage = mediaNode.ToImage();
+                        var mImage = mediaNode.ToMediaImage();
 
                         return mImage;
                     }
@@ -744,7 +744,7 @@
                     if (iPub.ContentType.Alias == "Image")
                     {
                         //this IS an Umbraco media item
-                        var mImage = iPub.ToImage();
+                        var mImage = iPub.ToMediaImage();
                         return mImage;
                     }
                 }
@@ -759,7 +759,7 @@
 
                     if (mediaContent.Any())
                     {
-                        return mediaContent.Where(x => x != null).Select(x => x.ToImage()).FirstOrDefault();
+                        return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage()).FirstOrDefault();
                     }
                     else
                     {
@@ -906,7 +906,7 @@
 
             if (mediaContent.Any())
             {
-                return mediaContent.Where(x => x != null).Select(x => x.ToImage());
+                return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage());
             }
             else
             {
@@ -947,7 +947,7 @@
 
             if (mediaContent.Any())
             {
-                return mediaContent.Where(x => x != null).Select(x => x.ToImage());
+                return mediaContent.Where(x => x != null).Select(x => x.ToMediaImage());
             }
             else
             {
