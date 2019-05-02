@@ -189,7 +189,7 @@
         }
 
         /// <summary>
-        /// Returns an IPublishedContent from a ContentPicker Macro Parameter
+        /// Returns an IPublishedContent from a MediaPicker Macro Parameter
         /// </summary>
         /// <param name="MacrosCollection">ex: 'Model.MacroParameters'</param>
         /// <param name="Key">Parameter alias</param>
@@ -210,6 +210,39 @@
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Returns a collection of IPublishedContent from a MultiMediaPicker Macro Parameter
+        /// </summary>
+        /// <param name="MacrosCollection">ex: 'Model.MacroParameters'</param>
+        /// <param name="Key">Parameter alias</param>
+        /// <param name="UmbracoHelper">ex: 'Umbraco'</param>
+        /// <returns>IEnumerable&lt;IPublishedContent&gt;</returns>
+        public static IEnumerable<IPublishedContent> GetSafeParamMultiMediaContent(IDictionary<string, object> MacrosCollection, string Key, UmbracoHelper UmbracoHelper)
+        {
+            var nodesList = new List<IPublishedContent>();
+
+            var value = MacrosCollection[Key];
+
+            if (value != null && value.ToString() != "")
+            {
+                var contentIds = value.ToString().Split(',');
+
+                if (contentIds.Any())
+                {
+                    foreach (var id in contentIds)
+                    {
+                        var node = UmbracoHelper.TypedMedia(id);
+                        if (node != null)
+                        {
+                            nodesList.Add(node);
+                        }
+                    }
+                }
+            }
+
+            return nodesList;
         }
     }
 }
