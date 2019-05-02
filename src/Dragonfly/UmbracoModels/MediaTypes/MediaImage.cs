@@ -5,6 +5,7 @@
     using Newtonsoft.Json.Linq;
     using Umbraco.Core.Models;
     using Umbraco.Web;
+    using Umbraco.Web.Models;
 
     /// <summary>
     /// Marker interface for a media image.
@@ -75,6 +76,7 @@
         public string ImageAltDictionaryKey { get; set; }
 
         public JObject JsonCropData { get; set; }
+        public ImageCropDataSet CropData { get; set; }
 
         public bool HasFocalPoint { get; set; }
 
