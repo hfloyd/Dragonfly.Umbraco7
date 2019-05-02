@@ -271,7 +271,7 @@
 
 
         /// <summary>
-        /// Utility extension to convert <see cref="IPublishedContent"/> crop to an <see cref="IMediaImage"/>
+        /// Utility extension to convert crop info to an <see cref="IMediaImage"/>
         /// </summary>
         /// <returns>
         /// The <see cref="IMediaImage"/>.
@@ -292,7 +292,7 @@
         }
 
         /// <summary>
-        /// Utility extension to convert <see cref="IPublishedContent"/> to an <see cref="IMediaImage"/>
+        /// Utility extension to convert crop info to an <see cref="IMediaImage"/>
         /// </summary>
         /// <returns>
         /// The <see cref="IMediaImage"/>.
@@ -359,6 +359,48 @@
 
             return img;
         }
+
+        /// <summary>
+        /// Utility extension to convert <see cref="ImageCropDataSet"/> info to an <see cref="IMediaImage"/>
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IMediaImage"/>.
+        /// </returns>
+        public static IMediaImage CropperPropertyToImage(ImageCropDataSet ImageCropperProperty, string ImageName = "", string AltText = "", string AltDictionary = "")
+        {
+            var img = new MediaImage()
+            {
+                Name = ImageName,
+                ImageAltText = AltText,
+                ImageAltDictionaryKey = AltDictionary,
+                Content = null,
+                Id = 0
+            };
+
+            if (ImageCropperProperty != null)
+            {
+                try
+                {
+                    img.CropData = ImageCropperProperty;
+                    img.Url = ImageCropperProperty.Src;
+                    img.HasFocalPoint = ImageCropperProperty.HasFocalPoint();
+                    img.FocalPointLeft = Convert.ToDouble(ImageCropperProperty.FocalPoint.Left);
+                    img.FocalPointTop = Convert.ToDouble(ImageCropperProperty.FocalPoint.Top);
+
+                    //Get image info
+                    img = AddFileInfoFromServer(img);
+                }
+                catch (Exception e)
+                {
+                    var msg =
+                        $"{ThisClassName}.CropperPropertyToImage() ERROR [ImageCropperProperty:{ImageCropperProperty}] [ImageName: {ImageName}]";
+                    LogHelper.Error<IMediaImage>(msg, e);
+                }
+            }
+
+            return img;
+        }
+
 
         /// <summary>
         /// Utility extension to convert <see cref="IPublishedContent"/> to an <see cref="IMediaImage"/>
