@@ -15,8 +15,8 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>1.6.6</Version>
-    <PackageReleaseNotes>Fixing GetSafeImage() to check if the property passed-in is an Image IPub</PackageReleaseNotes>
+    <Version>1.6.7</Version>
+    <PackageReleaseNotes>Adding Macros.GetSafeParamMultiMediaContent() and MediaExtensions.CropperPropertyToImage() for ImageCropDataSet</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dragonfly.Net" Version="1.12.2" />
