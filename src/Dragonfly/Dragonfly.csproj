@@ -15,11 +15,12 @@
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>2.1.3</Version>
-    <AssemblyVersion>2.1.3.0</AssemblyVersion>
-    <FileVersion>2.1.3.0</FileVersion>
-    <PackageReleaseNotes>Adding "GetResizeUrl()" method to MediaImage</PackageReleaseNotes>
-  </PropertyGroup>
+    <Version>2.2.0</Version>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
+    <PackageReleaseNotes>Adding Html-related functions to the Development section</PackageReleaseNotes>
+       <PackageTags>Umbraco</PackageTags>
+   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\net45\Dragonfly.Umbraco7.xml</DocumentationFile>
   </PropertyGroup>

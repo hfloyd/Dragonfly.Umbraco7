@@ -3,11 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Web;
     using Umbraco.Core;
     using Umbraco.Core.Logging;
     using Umbraco.Core.Models;
     using Umbraco.Core.Services;
     using Umbraco.Web;
+    using HtmlAgilityPack;
 
     /// <summary>
     /// Development-related helpers (For working with Node Paths, Templates, DataTypes, Udis, etc.)
@@ -274,8 +276,8 @@
                 {
                     if (publishedContent != null)
                     {
-                       var udi = ToUdiString(publishedContent, UdiType);
-                       list.Add(udi.ToString());
+                        var udi = ToUdiString(publishedContent, UdiType);
+                        list.Add(udi.ToString());
                     }
                 }
             }
@@ -289,11 +291,11 @@
         /// <param name="UdiType">UDI Type to use (document, media, etc) (use 'Umbraco.Core.Constants.UdiEntityType.' to specify)
         /// If excluded, will try to use the DocTypeAlias to determine the UDI Type</param>
         /// <returns></returns>
-        public static string ToUdiString(this IPublishedContent IPub, string UdiType="")
+        public static string ToUdiString(this IPublishedContent IPub, string UdiType = "")
         {
             if (IPub != null)
             {
-                var udiType = UdiType != ""? UdiType : GetUdiType(IPub);
+                var udiType = UdiType != "" ? UdiType : GetUdiType(IPub);
                 var udi = Umbraco.Core.Udi.Create(udiType, IPub.GetKey());
                 return udi.ToString();
             }
@@ -325,6 +327,141 @@
             }
 
             return udiType;
+        }
+
+        #endregion
+
+        #region Html
+        /// <summary>
+        /// Validates string as html
+        /// </summary>
+        /// <param name="OriginalHtml"></param>
+        /// <returns>True if valid HTML, False if Invalid</returns>
+        public static bool HtmlIsValid(this string OriginalHtml)
+        {
+            IEnumerable<HtmlParseError> validationErrors;
+            return HtmlIsValid(OriginalHtml, out validationErrors);
+        }
+
+        /// <summary>
+        /// Validates string as html, returns errors
+        /// </summary>
+        /// <param name="OriginalHtml"></param>
+        /// <param name="ValidationErrors">Variable of type IEnumerable&lt;HtmlParseError&gt;</param>
+        /// <returns></returns>
+        public static bool HtmlIsValid(this string OriginalHtml, out IEnumerable<HtmlParseError> ValidationErrors)
+        {
+            if (!OriginalHtml.IsNullOrWhiteSpace())
+            {
+                HtmlDocument doc = new HtmlDocument();
+
+                doc.LoadHtml(OriginalHtml);
+
+                if (doc.ParseErrors.Any())
+                {
+                    //Invalid HTML
+                    ValidationErrors = doc.ParseErrors;
+                    return false;
+                }
+            }
+            ValidationErrors = new List<HtmlParseError>();
+            return true;
+        }
+
+        /// <summary>
+        /// Removes all &lt;script&gt; tags from HTML
+        /// </summary>
+        /// <param name="OriginalHtml"></param>
+        /// <param name="ReplaceWith">optional - text or HTML to replace the script tag with</param>
+        /// <returns></returns>
+        public static string StripScripts(this string OriginalHtml, string ReplaceWith = "")
+        {
+            if (!OriginalHtml.IsNullOrWhiteSpace())
+            {
+                HtmlDocument doc = new HtmlDocument();
+
+                doc.LoadHtml(OriginalHtml);
+
+                var badNodes = doc.DocumentNode.SelectNodes("//script");
+                if (badNodes != null)
+                {
+                    if (ReplaceWith != "")
+                    {
+                        HtmlNode replacementNode = HtmlNode.CreateNode(ReplaceWith);
+
+                        foreach (var node in badNodes)
+                        {
+                            doc.DocumentNode.ReplaceChild(replacementNode, node);
+                        }
+                    }
+                    else
+                    {
+                        //Just remove
+                        foreach (var node in badNodes)
+                        {
+                            node.Remove();
+                        }
+                    }
+
+                    return doc.DocumentNode.InnerHtml.ToString();
+                }
+                else
+                {
+                    //No scripts, just return original
+                    return OriginalHtml;
+                }
+            }
+            else
+            {
+                return "";
+            }
+        }
+        /// <summary>
+        /// Removes all &lt;iframe&gt; tags from HTML
+        /// </summary>
+        /// <param name="OriginalHtml"></param>
+        /// <param name="ReplaceWith">optional - text or HTML to replace the script tag with</param>
+        /// <returns></returns>
+        public static string StripIframes(this string OriginalHtml, string ReplaceWith = "")
+        {
+            if (!OriginalHtml.IsNullOrWhiteSpace())
+            {
+                HtmlDocument doc = new HtmlDocument();
+
+                doc.LoadHtml(OriginalHtml);
+
+                var badNodes = doc.DocumentNode.SelectNodes("//iframe");
+                if (badNodes != null)
+                {
+                    if (ReplaceWith != "")
+                    {
+                        HtmlNode replacementNode = HtmlNode.CreateNode(ReplaceWith);
+
+                        foreach (var node in badNodes)
+                        {
+                            doc.DocumentNode.ReplaceChild(replacementNode, node);
+                        }
+                    }
+                    else
+                    {
+                        //Just remove
+                        foreach (var node in badNodes)
+                        {
+                            node.Remove();
+                        }
+                    }
+                    return doc.DocumentNode.InnerHtml.ToString();
+                }
+                else
+                {
+                    //Nothing to remove, just return original
+                    return OriginalHtml;
+                }
+            }
+            else
+            {
+                return "";
+            }
         }
 
         #endregion
