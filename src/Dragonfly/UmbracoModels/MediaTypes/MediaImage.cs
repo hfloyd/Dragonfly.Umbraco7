@@ -170,12 +170,12 @@
         public string GetResizeUrl(int Width, int Height, string BgColorForPadding, IEnumerable<KeyValuePair<string, string>> AdditionalParameters = null)
         {
             var baseUrl = this.Url;
-            var bgColor = BgColorForPadding.Replace("#", "");
-
+            var bgColor = BgColorForPadding!=""? BgColorForPadding.Replace("#", "") :"FFFFFF";
+            
             var dimensions = "";
             if (Width > 0 & Height > 0)
             {
-                dimensions = $"width={Width}&height={Height}";
+                dimensions = $"width={Width}&height={Height}&bgcolor={bgColor}";
             }
             else if (Width == 0 & Height > 0)
             {
@@ -196,7 +196,7 @@
                 }
             }
 
-            var url = $"{baseUrl}?{dimensions}&upscale=false&bgcolor={bgColor}{additionalParams}";
+            var url = $"{baseUrl}?{dimensions}&upscale=false{additionalParams}";
 
             return url;
         }
@@ -208,7 +208,7 @@
         /// <param name="Width">Pixel Width (use zero to exclude value)</param>
         /// <param name="BgColorForPadding">Hex code for color used to fill background, since there is no up-sizing. Example: "#FFFFFF"</param>
         /// <returns></returns>
-        public string GetResizeUrl(int Width, int Height, string BgColorForPadding)
+        public string GetResizeUrl(int Width, int Height, string BgColorForPadding = "")
         {
             return GetResizeUrl(Width, Height, BgColorForPadding, AdditionalParameters: null);
         }
