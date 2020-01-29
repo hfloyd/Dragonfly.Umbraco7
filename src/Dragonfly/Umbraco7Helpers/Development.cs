@@ -378,20 +378,31 @@
         {
             if (!OriginalHtml.IsNullOrWhiteSpace())
             {
-                HtmlDocument doc = new HtmlDocument();
+                HtmlDocument doc = new HtmlDocument()
+                {
+                    OptionWriteEmptyNodes = true
+                };
 
                 doc.LoadHtml(OriginalHtml);
 
-                var badNodes = doc.DocumentNode.SelectNodes("//script");
-                if (badNodes != null)
+                var scriptNodes = doc.DocumentNode.SelectNodes("//script");
+                if (scriptNodes != null)
                 {
+                    var badNodes = scriptNodes.ToArray();
                     if (ReplaceWith != "")
                     {
-                        HtmlNode replacementNode = HtmlNode.CreateNode(ReplaceWith);
-
-                        foreach (var node in badNodes)
+                        try
                         {
-                            doc.DocumentNode.ReplaceChild(replacementNode, node);
+                            foreach (var node in badNodes)
+                            {
+                                HtmlNode replacementNode = doc.CreateTextNode(ReplaceWith);
+                                node.ParentNode.ReplaceChild(replacementNode, node);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            LogHelper.Error<string>($"Error in Development.StripScripts() for HTML: /n/r {OriginalHtml}", e);
+                            throw;
                         }
                     }
                     else
@@ -426,7 +437,10 @@
         {
             if (!OriginalHtml.IsNullOrWhiteSpace())
             {
-                HtmlDocument doc = new HtmlDocument();
+                HtmlDocument doc = new HtmlDocument()
+                {
+                    OptionWriteEmptyNodes = true
+                };
 
                 doc.LoadHtml(OriginalHtml);
 
@@ -435,11 +449,18 @@
                 {
                     if (ReplaceWith != "")
                     {
-                        HtmlNode replacementNode = HtmlNode.CreateNode(ReplaceWith);
-
-                        foreach (var node in badNodes)
+                        try
                         {
-                            doc.DocumentNode.ReplaceChild(replacementNode, node);
+                            foreach (var node in badNodes)
+                            {
+                                HtmlNode replacementNode = doc.CreateTextNode(ReplaceWith);
+                                node.ParentNode.ReplaceChild(replacementNode, node);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            LogHelper.Error<string>($"Error in Development.StripScripts() for HTML: /n/r {OriginalHtml}", e);
+                            throw;
                         }
                     }
                     else
@@ -462,6 +483,138 @@
             {
                 return "";
             }
+        }
+
+
+        /// <summary>
+        /// Convert HTML to an AMP-compatible version of HTML
+        /// </summary>
+        /// <param name="originalHtml"></param>
+        /// <returns></returns>
+        public static HtmlString ConvertToAmpHtml(this IHtmlString originalHtml)
+        {
+            //TODO Check against AMP documentation
+
+            string originalGridHtmlStr = originalHtml.ToString();
+
+            //Initial basic AMP replacements
+            originalGridHtmlStr = originalGridHtmlStr.Replace("<img ", "<amp-img layout=\"responsive\" width=\"320\" height=\"200\" style=\"width:100%;height:auto\" ");
+            originalGridHtmlStr = originalGridHtmlStr.Replace("<iframe ", "<amp-iframe layout=\"responsive\" sandbox=\"allow-scripts allow-same-origin allow-popups\" ");
+
+            //more in-depth replacements/fixes
+            var htmlDoc = new HtmlDocument()
+            {
+                OptionWriteEmptyNodes = true
+            };
+            htmlDoc.LoadHtml(originalGridHtmlStr);
+            var bodyNode = htmlDoc.DocumentNode.SelectSingleNode("html/body");
+            bool isBodyContentOnly = bodyNode == null;
+
+            //AMP-IMG fixes
+            var imageTags = htmlDoc.DocumentNode.SelectNodes("//amp-img");
+            if (imageTags != null)
+            {
+                foreach (var image in imageTags.ToList())
+                {
+                    image.Attributes.Remove("displaymode");
+                }
+            }
+
+            //AMP-IFRAME fixes
+            var iframeTags = htmlDoc.DocumentNode.SelectNodes("//amp-iframe");
+            if (iframeTags != null)
+            {
+                foreach (var iframe in iframeTags.ToList())
+                {
+
+                    iframe.Attributes.Remove("mozallowfullscreen");
+                    iframe.Attributes.Remove("webkitallowfullscreen");
+                    iframe.Attributes.Remove("gesture");
+
+                    iframe.Attributes.Remove("allowfullscreen");
+                    iframe.SetAttributeValue("allowfullscreen", "");
+
+                    //default: width="640" height="360"
+                    var width = iframe.GetAttributeValue("width", string.Empty);
+                    if (string.IsNullOrEmpty(width))
+                    {
+                        iframe.Attributes.Remove("width");
+                        iframe.SetAttributeValue("width", "640");
+                    }
+                    var height = iframe.GetAttributeValue("height", string.Empty);
+                    if (string.IsNullOrEmpty(height))
+                    {
+                        iframe.Attributes.Remove("height");
+                        iframe.SetAttributeValue("height", "360");
+                    }
+                }
+            }
+
+            //SCRIPT fixes
+            var scriptTags = htmlDoc.DocumentNode.SelectNodes("//script");
+            if (scriptTags != null)
+            {
+                foreach (var script in scriptTags.ToList())
+                {
+                    //if it is an inline script, remove it
+                    var src = script.GetAttributeValue("src", string.Empty);
+                    if (string.IsNullOrEmpty(src))
+                    {
+                        script.Remove();
+                    }
+                }
+            }
+
+            //STYLE tag fixes
+            //if it is in the BODY, remove it
+            if (isBodyContentOnly)
+            {
+                var styleTags = htmlDoc.DocumentNode.SelectNodes("//style");
+                if (styleTags != null)
+                {
+                    foreach (var tag in styleTags.ToList())
+                    {
+                        tag.Remove();
+                    }
+                }
+            }
+            else
+            {
+                var styleTags = bodyNode.SelectNodes("//style");
+                if (styleTags != null)
+                {
+                    foreach (var tag in styleTags.ToList())
+                    {
+                        tag.Remove();
+                    }
+                }
+            }
+
+            //Fixes to A tags
+            var aTags = htmlDoc.DocumentNode.SelectNodes("//a");
+            if (aTags != null)
+            {
+                foreach (var tag in aTags.ToList())
+                {
+                    tag.Attributes.Remove("onclick");
+
+
+                }
+            }
+
+
+            //Remove ALL style attributes from ALL Tags
+            var allTagsWithAttributes = htmlDoc.DocumentNode.Descendants()
+                .Where(x => x.NodeType == HtmlNodeType.Element && x.Attributes.Any()).ToList();
+
+            foreach (var tag in allTagsWithAttributes.ToList())
+            {
+                tag.Attributes.Remove("style");
+            }
+
+
+
+            return new HtmlString(htmlDoc.DocumentNode.OuterHtml);
         }
 
         #endregion
