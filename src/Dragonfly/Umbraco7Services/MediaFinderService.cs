@@ -1,5 +1,6 @@
 ﻿namespace Dragonfly.Umbraco7Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Umbraco.Core;
@@ -16,9 +17,41 @@
         /// Service to retrieve Media Nodes via various search methods
         /// </summary>
         /// <param name="umbHelper">UmbracoHelper passed-in</param>
-        public MediaFinderService(UmbracoHelper umbHelper)
+        public MediaFinderService(UmbracoHelper UmbHelper)
         {
-            _umbHelper = umbHelper;
+            var emptyList = new List<IPublishedContent>();
+
+            CtorMediaFinderService(UmbHelper, emptyList);
+        }
+
+        /// <summary>
+        /// Service to retrieve Media Nodes via various search methods
+        /// </summary>
+        /// <param name="umbHelper">UmbracoHelper passed-in</param>
+        public MediaFinderService(UmbracoHelper UmbHelper, IEnumerable<IPublishedContent> MediaAtRoot)
+        {
+            CtorMediaFinderService(UmbHelper, MediaAtRoot);
+        }
+
+        private void CtorMediaFinderService(UmbracoHelper UmbHelper, IEnumerable<IPublishedContent> MediaAtRoot)
+        {
+            if (UmbHelper != null)
+            {
+                _umbHelper = UmbHelper;
+            }
+            else
+            {
+                //TODO create custom exception
+                var msg = "Unable to Initialize 'MediaFinderService' - UmbracoHelper is NULL.";
+                throw new NullReferenceException(msg);
+            }
+
+            _mediaAtRoot = MediaAtRoot;
+        }
+
+        public bool HasRootMedia()
+        {
+            return _mediaAtRoot.Any();
         }
 
         #region Get By Name
@@ -187,10 +220,23 @@
             if (!_mediaAtRoot.Any())
             {
                 _mediaAtRoot = _umbHelper.TypedMediaAtRoot();
+
+                if (!_mediaAtRoot.Any())
+                {
+                    //TODO create custom exception
+                    var msg ="Unable to Initialize Media List - No Media at Root Found. Please Rebuild your Internal Examine Index";
+                    throw new NullReferenceException(msg);
+                }
             }
 
             return _mediaAtRoot;
         }
+
+        #endregion
+
+        #region Exceptions
+        //TODO create custom Exceptions
+
 
         #endregion
 
