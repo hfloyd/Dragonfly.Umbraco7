@@ -8,17 +8,17 @@
     <Authors>Heather Floyd</Authors>
     <Company></Company>
     <Product>Dragonfly</Product>
-    <Description>A collection of Umbraco 7 Helpers &amp; Models (min. Umbraco 7.0)</Description>
+    <Description>A collection of Umbraco 7 Helpers &amp; Models (min. Umbraco 7.3)</Description>
     <PackageLicenseUrl>https://github.com/hfloyd/Dragonfly.Umbraco7/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/hfloyd/Dragonfly.Umbraco7</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hfloyd/Dragonfly.Umbraco7</RepositoryUrl>
     <PackageId>Dragonfly.Umbraco7</PackageId>
     <AssemblyName>Dragonfly.Umbraco7</AssemblyName>
     <RootNamespace>Dragonfly</RootNamespace>
-    <Version>0.25.0</Version>
+    <Version>0.5.0</Version>
     <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <FileVersion>0.5.0.0</FileVersion>
-    <PackageReleaseNotes>Based on v2.5, but with a dependency on Umbraco 7.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Based on v2.5, but with a dependency on Umbraco 7.3.0</PackageReleaseNotes>
        <PackageTags>Umbraco</PackageTags>
    </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -27,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Dragonfly.Net" Version="1.21.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" PrivateAssets="All" />
-    <PackageReference Include="UmbracoCms.Core" Version="7.0.0" PrivateAssets="All" />
+    <PackageReference Include="UmbracoCms.Core" Version="7.3.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
