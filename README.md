@@ -16,3 +16,9 @@ Certain versions have been compiled with a minimum required Umbraco CMS dependen
 **Minimum Umbraco 7.7.1**
 
     PM > Install-Package Dragonfly.Umbraco7 -Version 1.5.0
+
+**Minimum Umbraco 7.3.0**
+
+    PM > Install-Package Dragonfly.Umbraco7 -Version 0.5.0
+
+*Versions below 7.3 are not supported
