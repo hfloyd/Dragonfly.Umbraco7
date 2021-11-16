@@ -119,6 +119,11 @@
                 return true;
             }
 
+            if (path.Contains("/umbraco/backoffice/DocTypeGridEditorApi/"))
+            {
+                return true;
+            }
+
             return false;
         }
 
