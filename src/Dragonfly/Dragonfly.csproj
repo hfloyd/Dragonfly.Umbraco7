@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -27,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Dragonfly.Net" Version="1.12.2" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" PrivateAssets="All" />
-    <PackageReference Include="UmbracoCms.Core" Version="7.9.1" PrivateAssets="All" />
+    <PackageReference Include="UmbracoCms.Core" Version="8.5.4" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
